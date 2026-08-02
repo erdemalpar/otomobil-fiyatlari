@@ -1,0 +1,228 @@
+import json
+import os
+from datetime import datetime
+
+DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'public', 'data')
+JSON_PATH = os.path.join(DATA_DIR, 'vehicles.json')
+
+def fetch_prices():
+    """
+    Marka sitelerinden güncel fiyat verilerini toplayan simülasyon fonksiyonu.
+    """
+    print("Otomatik Fiyat Güncelleme Botu Çalışıyor...")
+    
+    vehicles = [
+        {
+            "id": "togg-t10x-v2",
+            "brand": "Togg",
+            "model": "T10X",
+            "version": "V2 Uzun Menzil",
+            "type": "Elektrikli SUV",
+            "price_list": 1823000,
+            "price_campaign": 1780000,
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Togg_T10X_at_Zorlu_Center_%281%29.jpg/800px-Togg_T10X_at_Zorlu_Center_%281%29.jpg",
+            "features": ["Elektrikli", "523 km Menzil", "218 BG", "Arkadan İtiş"]
+        },
+        {
+            "id": "tesla-modely-lr",
+            "brand": "Tesla",
+            "model": "Model Y",
+            "version": "Long Range AWD",
+            "type": "Elektrikli SUV",
+            "price_list": 3084000,
+            "price_campaign": 3084000,
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Tesla_Model_Y_1.jpg/800px-Tesla_Model_Y_1.jpg",
+            "features": ["Elektrikli", "533 km Menzil", "Çift Motor AWD", "Otopilot"]
+        },
+        {
+            "id": "hyundai-ioniq6",
+            "brand": "Hyundai",
+            "model": "IONIQ 6",
+            "version": "Progressive 77.4 kWh",
+            "type": "Elektrikli Sedan",
+            "price_list": 2930000,
+            "price_campaign": 2850000,
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Hyundai_Ioniq_6_CE_IAA_2023_1X7A0064.jpg/800px-Hyundai_Ioniq_6_CE_IAA_2023_1X7A0064.jpg",
+            "features": ["Elektrikli", "519 km Menzil", "325 BG", "Hızlı Şarj (800V)"]
+        },
+        {
+            "id": "renault-megane-etech",
+            "brand": "Renault",
+            "model": "Megane E-Tech",
+            "version": "Iconic EV60",
+            "type": "Elektrikli Hatchback",
+            "price_list": 1850000,
+            "price_campaign": 1799000,
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Renault_Megane_E-Tech_Electric_at_IAA_2021.jpg/800px-Renault_Megane_E-Tech_Electric_at_IAA_2021.jpg",
+            "features": ["Elektrikli", "450 km Menzil", "220 BG", "Google Built-in"]
+        },
+        {
+            "id": "ford-mustang-mache",
+            "brand": "Ford",
+            "model": "Mustang Mach-E",
+            "version": "Premium RWD",
+            "type": "Elektrikli SUV",
+            "price_list": 3850000,
+            "price_campaign": 3720000,
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/2021_Ford_Mustang_Mach-E_First_Edition.jpg/800px-2021_Ford_Mustang_Mach-E_First_Edition.jpg",
+            "features": ["Elektrikli", "600 km Menzil", "294 BG", "Cam Tavan"]
+        },
+        {
+            "id": "fiat-500e",
+            "brand": "Fiat",
+            "model": "500e",
+            "version": "La Prima by Bocelli",
+            "type": "Elektrikli Şehir Aracı",
+            "price_list": 1425000,
+            "price_campaign": 1395000,
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Fiat_500e_3%2B1_Icon_in_Stuttgart.jpg/800px-Fiat_500e_3%2B1_Icon_in_Stuttgart.jpg",
+            "features": ["Elektrikli", "320 km Menzil", "118 BG", "Premium Ses Sistemi"]
+        },
+        {
+            "id": "opel-astra",
+            "brand": "Opel",
+            "model": "Astra",
+            "version": "1.2 130 HP AT8 Edition",
+            "type": "Hatchback",
+            "price_list": 1565900,
+            "price_campaign": 1565900,
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Opel_Astra_L_PHEV_1X7A7165.jpg/800px-Opel_Astra_L_PHEV_1X7A7165.jpg",
+            "features": ["Benzinli", "130 BG", "Otomatik"]
+        },
+        {
+            "id": "opel-astra-e",
+            "brand": "Opel",
+            "model": "Astra",
+            "version": "Elektrik 115 kW Ultimate",
+            "type": "Elektrikli Hatchback",
+            "price_list": 1785900,
+            "price_campaign": 1785900,
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Opel_Astra_L_PHEV_1X7A7165.jpg/800px-Opel_Astra_L_PHEV_1X7A7165.jpg",
+            "features": ["Elektrikli", "418 km Menzil", "156 BG"]
+        },
+        {
+            "id": "opel-frontera",
+            "brand": "Opel",
+            "model": "Frontera",
+            "version": "1.2 Hybrid 136 HP e-DCT6",
+            "type": "SUV",
+            "price_list": 1595000,
+            "price_campaign": 1495000,
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Opel_Frontera_A_5-doors_front_20091017.jpg/800px-Opel_Frontera_A_5-doors_front_20091017.jpg",
+            "features": ["Hibrit", "136 BG", "Otomatik"]
+        },
+        {
+            "id": "opel-frontera-e",
+            "brand": "Opel",
+            "model": "Frontera",
+            "version": "Elektrik 115 kW",
+            "type": "Elektrikli SUV",
+            "price_list": 1650000,
+            "price_campaign": 1650000,
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Opel_Frontera_A_5-doors_front_20091017.jpg/800px-Opel_Frontera_A_5-doors_front_20091017.jpg",
+            "features": ["Elektrikli", "300+ km Menzil", "156 BG"]
+        },
+        {
+            "id": "opel-corsa",
+            "brand": "Opel",
+            "model": "Corsa",
+            "version": "1.2 100 HP AT8 Edition",
+            "type": "Hatchback",
+            "price_list": 1225900,
+            "price_campaign": 1225900,
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Opel_Corsa_F_1.2_Elegance_front_20200822.jpg/800px-Opel_Corsa_F_1.2_Elegance_front_20200822.jpg",
+            "features": ["Benzinli", "100 BG", "Otomatik"]
+        },
+        {
+            "id": "opel-corsa-e",
+            "brand": "Opel",
+            "model": "Corsa",
+            "version": "Elektrik 100 kW GS",
+            "type": "Elektrikli Hatchback",
+            "price_list": 1345900,
+            "price_campaign": 1345900,
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Opel_Corsa_F_1.2_Elegance_front_20200822.jpg/800px-Opel_Corsa_F_1.2_Elegance_front_20200822.jpg",
+            "features": ["Elektrikli", "354 km Menzil", "136 BG"]
+        },
+        {
+            "id": "opel-grandland",
+            "brand": "Opel",
+            "model": "Grandland",
+            "version": "1.2 130 HP AT8 Ultimate",
+            "type": "SUV",
+            "price_list": 1945900,
+            "price_campaign": 1945900,
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Opel_Grandland_X_1.2_DI_Turbo_Business_Elegance_%28I%29.jpg/800px-Opel_Grandland_X_1.2_DI_Turbo_Business_Elegance_%28I%29.jpg",
+            "features": ["Benzinli", "130 BG", "Otomatik"]
+        },
+        {
+            "id": "opel-grandland-x",
+            "brand": "Opel",
+            "model": "Grandland X",
+            "version": "1.5 Dizel 130 HP AT8 Excellence",
+            "type": "SUV",
+            "price_list": 1750000,
+            "price_campaign": 1690000,
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Opel_Grandland_X_1.2_DI_Turbo_Business_Elegance_%28I%29.jpg/800px-Opel_Grandland_X_1.2_DI_Turbo_Business_Elegance_%28I%29.jpg",
+            "features": ["Dizel", "130 BG", "Otomatik"]
+        },
+        {
+            "id": "opel-mokka",
+            "brand": "Opel",
+            "model": "Mokka",
+            "version": "1.2 130 HP AT8 GS",
+            "type": "SUV",
+            "price_list": 1645900,
+            "price_campaign": 1565900,
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Opel_Mokka_e.jpg/800px-Opel_Mokka_e.jpg",
+            "features": ["Benzinli", "130 BG", "Otomatik"]
+        },
+        {
+            "id": "opel-mokka-e",
+            "brand": "Opel",
+            "model": "Mokka",
+            "version": "Elektrik 100 kW Ultimate",
+            "type": "Elektrikli SUV",
+            "price_list": 1650900,
+            "price_campaign": 1590900,
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Opel_Mokka_e.jpg/800px-Opel_Mokka_e.jpg",
+            "features": ["Elektrikli", "327 km Menzil", "136 BG"]
+        },
+        {
+            "id": "opel-crossland",
+            "brand": "Opel",
+            "model": "Crossland",
+            "version": "1.2 130 HP AT6 Essential",
+            "type": "SUV",
+            "price_list": 1245900,
+            "price_campaign": 1195900,
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/9/91/Opel_Crossland.jpg",
+            "features": ["Benzinli", "130 BG", "Otomatik"]
+        },
+        {
+            "id": "opel-crossland-x",
+            "brand": "Opel",
+            "model": "Crossland X",
+            "version": "1.5 Dizel 120 HP AT6 Excellence",
+            "type": "SUV",
+            "price_list": 1150000,
+            "price_campaign": 1100000,
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/9/91/Opel_Crossland.jpg",
+            "features": ["Dizel", "120 BG", "Otomatik"]
+        }
+    ]
+    
+    data = {
+        "lastUpdated": datetime.utcnow().isoformat() + "Z",
+        "vehicles": vehicles
+    }
+    
+    os.makedirs(DATA_DIR, exist_ok=True)
+    
+    with open(JSON_PATH, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+        
+    print(f"✅ {len(vehicles)} aracın fiyatı başarıyla güncellendi: {JSON_PATH}")
+
+if __name__ == "__main__":
+    fetch_prices()
